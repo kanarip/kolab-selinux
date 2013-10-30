@@ -1,0 +1,11 @@
+/etc/kolab/kolab\.conf -- gen_context(system_u:object_r:kolab_config_t,s0)
+
+/etc/rc\.d/init\.d/kolab-saslauthd --  gen_context(system_u:object_r:saslauthd_initrc_exec_t,s0)
+
+/usr/sbin/kolab-saslauthd --  gen_context(system_u:object_r:saslauthd_exec_t,s0)
+
+/var/lib/kolab(/.*)? gen_context(system_u:object_r:kolab_var_lib_t,s0)
+
+/var/log/kolab(/.*)? gen_context(system_u:object_r:kolab_log_t,s0)
+
+/var/run/kolab-saslauthd(/.*)? gen_context(system_u:object_r:kolab_var_run_t,s0)

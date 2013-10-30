@@ -1,0 +1,42 @@
+policy_module(kolab, 0.0.1)
+
+gen_require(`
+        type cyrus_t;
+        type saslauthd_t;
+        type saslauthd_exec_t;
+        type saslauthd_var_run_t;
+        type saslauthd_initrc_exec_t;
+        type unconfined_t;
+    ')
+
+type kolab_cache_t;
+files_type(kolab_cache_t)
+
+type kolab_config_t;
+files_config_file(kolab_config_t)
+
+type kolab_log_t;
+logging_log_file(kolab_log_t)
+
+type kolab_var_lib_t;
+logging_log_file(kolab_var_lib_t)
+
+type kolab_var_run_t;
+files_pid_file(kolab_var_run_t)
+
+init_daemon_domain(saslauthd_t, saslauthd_exec_t)
+init_script_file(saslauthd_initrc_exec_t)
+files_pid_file(kolab_var_run_t)
+
+allow cyrus_t unconfined_t:unix_stream_socket connectto;
+
+allow saslauthd_t self:capability dac_override;
+allow saslauthd_t self:capability { fowner chown fsetid dac_read_search };
+allow saslauthd_t kolab_log_t:file { write setattr };
+allow saslauthd_t kolab_var_run_t:dir { add_name getattr read search setattr write };
+allow saslauthd_t kolab_var_run_t:file { create getattr open read setattr write };
+allow saslauthd_t saslauthd_var_run_t:dir { getattr setattr };
+
+# Allow kolab-saslauthd to read/write /var/lib/kolab/auth_cache.db
+allow saslauthd_t kolab_var_lib_t:dir { add_name getattr read remove_name search setattr write };
+allow saslauthd_t kolab_var_lib_t:file { create getattr open read setattr unlink write };
